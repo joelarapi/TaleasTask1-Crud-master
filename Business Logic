@@ -1,0 +1,22 @@
+Business Logic of my application:
+
+	An application where a user can see the recommendations of public figures , see the books which these famous public figures prefer and which books are most commonly recommended by famous people.
+Public Figures:
+
+Have Recommended books field , which will show a list of books recommended by these famous people . Industry fields : A Famous person can be part of multiple industry fields , and you can filter people by this industry field . A description about this public figure and some information , including first name , last name and age . 
+
+Profits :
+Once a user has come across a preferred book , they can visit the book in itself which will have multiple information fields such as title , author , recommended by (x-public figure) an average rating etc. Inside the application there will be the opportunity to visit referral links such as Amazon Library or Apple Books where the user can buy the book . 
+
+Community interaction :
+Once a user purchases a book , there will be the option of leaving reviews and rating which will be interactive with other users by upvoting and downvoting each others reviews . (An option of leaving reviews before and after finishing the book could be an option)
+
+
+User Recommendations and Perks:
+
+A user will get suggestions upon books that they have purchased and left reviews on . These recommendations will be given upon a user’s reviews and ratings to books . The book’s genres and the public figures which have recommended this book . A perk that can be added upon further book purchases , would be a similarity score between the user and public figures . Which public figures they read the most alike .
+
+Referral programs and user scalability :
+User’s can refer their friends on this platform and get discounts based upon inviting users to the platform . They can get discounts on future book purchases , or based on how many book a user they’ve invited has purchased .  (for example a 10% discount on next book sale if a friend they have referred has purchased 5 books ).
+
+
