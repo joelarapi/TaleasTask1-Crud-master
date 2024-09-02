@@ -1,5 +1,5 @@
-
 const User = require("../models/user.model");
+const Purchase = require("../models/purchase.model");
 
 module.exports.createUser = async (req, res) => {
   const { userName, email } = req.body; // marrim username dhe email nga body
@@ -96,3 +96,26 @@ module.exports.deleteExistingUser = async (req, res) => {
   }
 };
 
+
+
+module.exports.purchaseBook = async (req, res) => {
+  try {
+    const { id: userId } = req.params; 
+    const { bookId } = req.body;      
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { purchasedBooks: bookId } }, // $addToSet prevents duplication , if a book is already in the array it wont add it 
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "Book purchased successfully", user });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err.message });
+  }
+};

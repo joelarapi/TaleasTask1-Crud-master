@@ -1,69 +1,21 @@
 const Comment = require("../models/comment.model");
 const Book = require("../models/book.model");
 const User = require("../models/user.model");
-
-// module.exports.createNewComment = async (req, res) => {
-//   const { text, user, book } = req.body; //merr required fields bga body 
-
-//   if (!text || !user || !book) { //nqs mungon nje nga fields japim error 
-//     return res
-//       .status(400)
-//       .json({ message: "Text, user, and book fields are required" });
-//   }
-
-//   try {
-//     const newComment = new Comment({
-//       text,
-//       user,
-//       book,
-//     });
-
-//     const savedComment = await newComment.save(); //ruajme komentin e ri ne databaze
-
-
-//     //modifikojme book dhe user 
-//     const [updatedBook, updatedUser] = await Promise.all([
-//       Book.findByIdAndUpdate(  //i shtojme tek array i comments qe eshte brenda book , komentin e ri 
-//         book,
-//         { $push: { comments: savedComment._id } },
-//         { new: true }
-//       ),
-//       User.findByIdAndUpdate( //i shtojme tek array i comments qe eshte brenda userComments , komentin e ri 
-//         user,
-//         { $push: { userComments: savedComment._id } },
-//         { new: true }
-//       )
-//     ]);
-//     //kontrollojme nese libri dhe user jane gjetur dhe bere update
-//     if (!updatedBook) {
-//       return res.status(404).json({ message: "Book not found" });
-//     }
-
-//     if (!updatedUser) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     res.status(201).json({  //success response 
-//       comment: savedComment, 
-//       book: updatedBook,
-//       user: updatedUser
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       message: "Server error while creating comment",
-//       error: err.message,
-//     });
-//   }
-// };
+const Purchase = require("../models/purchase.model"); 
 
 module.exports.createNewComment = async (req, res) => {
-  const { text, user, book, parentComment } = req.body; //get req fields from body
+  const { text, user, book, parentComment } = req.body;
 
   if (!text || !user || !book) {
     return res.status(400).json({ message: "Text, user, and book fields are required" });
-  }//check if the fields are filled 
+  }
 
   try {
+    const hasPurchased = await Purchase.findOne({ user, book });
+    if (!hasPurchased) {
+      return res.status(403).json({ message: "You must purchase the book to leave a comment." });
+    }
+
     const newComment = new Comment({
       text,
       user,
@@ -76,13 +28,13 @@ module.exports.createNewComment = async (req, res) => {
     const updatePromises = [
       Book.findByIdAndUpdate(book, { $push: { comments: savedComment._id } }, { new: true }),
       User.findByIdAndUpdate(user, { $push: { userComments: savedComment._id } }, { new: true })
-    ]; // we are creating a new promise to the book and user document , by adding the new comments id to their comments array
+    ];
 
     if (parentComment) {
       updatePromises.push(Comment.findByIdAndUpdate(parentComment, { $push: { replies: savedComment._id } }, { new: true }));
-    } // handle the parent comment if the comment is a reply 
+    }
 
-    const [updatedBook, updatedUser, updatedParentComment] = await Promise.all(updatePromises);//await all the new promises 
+    const [updatedBook, updatedUser, updatedParentComment] = await Promise.all(updatePromises);
 
     if (!updatedBook) {
       return res.status(404).json({ message: "Book not found" });
@@ -90,7 +42,7 @@ module.exports.createNewComment = async (req, res) => {
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
-    }// checking for both the books and the users 
+    }
 
     res.status(201).json({
       comment: savedComment,
@@ -105,6 +57,7 @@ module.exports.createNewComment = async (req, res) => {
     });
   }
 };
+
 
 
 module.exports.findAllCommentsInABook = (req, res) => {

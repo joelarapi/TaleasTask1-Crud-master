@@ -19,4 +19,4 @@ const PublicFigureSchema  = new mongoose.Schema({
 
 }, {timestamps: true})
 
-mongoose.exports = mongoose.model('PublicFigure', PublicFigureSchema)
+module.exports = mongoose.model('PublicFigure', PublicFigureSchema)

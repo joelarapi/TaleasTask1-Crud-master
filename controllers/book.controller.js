@@ -2,83 +2,68 @@ const Book = require("../models/book.model");
 const User = require('../models/user.model')
 const { addRatingToUser } = require("../helpers/user.helpers")
 
-
-module.exports.findAllBooks = (req, res) => {
-  Book.find()
-    .then((allBooks) => {
-      res.json(allBooks);
-    })
-    .catch((err) => {
-      res
-        .status(500)
-        .json({
-          message: "Server error while fetching books",
-          error: err.message,
-        });
+module.exports.findAllBooks = async (req, res) => {
+  try {
+    const allBooks = await Book.find();
+    res.json(allBooks);
+  } catch (err) {
+    res.status(500).json({
+      message: "Server error while fetching books",
+      error: err.message,
     });
+  }
 };
 
-module.exports.findOneSingleBook = (req, res) => {
-  Book.findOne({ _id: req.params.id })
-    .then((oneSingleBook) => {
-      if (!oneSingleBook) {
-        return res.status(404).json({ message: "Book not found" });
-      }
-      res.json(oneSingleBook);
-    })
-    .catch((err) => {
-      res
-        .status(500)
-        .json({ message: "Something went wrong", error: err.message });
-    });
+module.exports.findOneSingleBook = async (req, res) => {
+  try {
+    const oneSingleBook = await Book.findOne({ _id: req.params.id });
+    if (!oneSingleBook) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+    res.json(oneSingleBook);
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err.message });
+  }
 };
 
-module.exports.createNewBook = (req, res) => {
-  Book.create(req.body)
-    .then((newlyCreatedBook) => {
-      res.status(201).json(newlyCreatedBook);
-    })
-    .catch((err) => {
-      res
-        .status(500)
-        .json({
-          message: "Server error while creating book",
-          error: err.message,
-        });
+module.exports.createNewBook = async (req, res) => {
+  try {
+    const newlyCreatedBook = await Book.create(req.body);
+    res.status(201).json(newlyCreatedBook);
+  } catch (err) {
+    res.status(500).json({
+      message: "Server error while creating book",
+      error: err.message,
     });
+  }
 };
 
-module.exports.updateExistingBook = (req, res) => {
-  Book.findOneAndUpdate({ _id: req.params.id }, req.body, {
-    new: true,
-    runValidators: true,
-  })
-    .then((updatedBook) => {
-      if (!updatedBook) {
-        return res.status(404).json({ message: "Book not found" });
-      }
-      res.json(updatedBook);
-    })
-    .catch((err) => {
-      res
-        .status(500)
-        .json({ message: "Something went wrong", error: err.message });
-    });
+module.exports.updateExistingBook = async (req, res) => {
+  try {
+    const updatedBook = await Book.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedBook) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+    res.json(updatedBook);
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err.message });
+  }
 };
 
-module.exports.deleteExistingBook = (req, res) => {
-  Book.findOneAndDelete({ _id: req.params.id })
-    .then((deletedBook) => {
-      if (!deletedBook) {
-        return res.status(404).json({ message: "Book not found" });
-      }
-      res.json({ message: "Book deleted successfully", result: deletedBook });
-    })
-    .catch((err) => {
-      res
-        .status(500)
-        .json({ message: "Something went wrong", error: err.message });
-    });
+module.exports.deleteExistingBook = async (req, res) => {
+  try {
+    const deletedBook = await Book.findOneAndDelete({ _id: req.params.id });
+    if (!deletedBook) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+    res.json({ message: "Book deleted successfully", result: deletedBook });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err.message });
+  }
 };
 
 module.exports.addRating= async (req, res) =>{
