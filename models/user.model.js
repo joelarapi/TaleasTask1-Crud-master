@@ -38,6 +38,11 @@ const UserSchema = new mongoose.Schema(
       required: [true, "A user must have an email!"],
       unique: true
     },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [8, "Password must be 8 characters or longer"],
+    },
     userComments: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment"

@@ -2,15 +2,17 @@ const User = require("../models/user.model");
 const Purchase = require("../models/purchase.model");
 
 module.exports.createUser = async (req, res) => {
-  const { userName, email } = req.body; // marrim username dhe email nga body
+  const { userName, email, password } = req.body; // marrim username dhe email nga body
 
   try {
     const existingUser = await User.findOne({ email }); //kontrollojme nese ekziston nje user me kte email 
     if (existingUser) { 
       return res.status(400).json({ error: "Email already in use" });
     }
-      //krijojme user te ri dhe e ruajme ne databaze
-    const newUser = new User({ userName, email });
+    //hashimi i passwordid  
+    const hashedPassword = await bcrypt.hash(password, 10);
+          //krijojme user te ri dhe e ruajme ne databaze
+    const newUser = new User({ userName, email, password: hashedPassword });
     const savedUser = await newUser.save();
 
     let savedProfile;
@@ -117,5 +119,28 @@ module.exports.purchaseBook = async (req, res) => {
     res.status(200).json({ message: "Book purchased successfully", user });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong", error: err.message });
+  }
+};
+
+
+module.exports.login = async (req, res) => {
+  try{
+    const user  = await User.findOne({email: body.req.email});
+    
+    if(!user){
+      return res.status(400).json({message: "User not found"})
+    }
+
+    const correctPassword = await bcrypt.compare(req.body.password, user.password)
+
+    if(!correctPassword){
+      return res.status(400).json({message: "Incorrect Password"})
+    }
+
+    const accessToken = jwt.sign({id: user_id, email:user.email}, process.env.ACCESS_TOKEN_SECRET)
+    res.json({accessToken : accessToken})
+
+  } catch(err){
+    res.status(500).json({message: 'error' , error: err.message})
   }
 };

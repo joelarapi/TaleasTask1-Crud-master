@@ -21,7 +21,8 @@ module.exports.addRatingToBook = async (userId, bookId, rating) => {
       book.ratings.push({ userId, rating }); 
     }
 
-    const sum = book.ratings.reduce((acc, r) => acc + r.rating, 0);
+    const sum = book.ratings.reduce((acc, r) => acc + r.rating, 0);//reduce eshte metod qe jep shume e gjith array 
+                                                            //merr 2 parameters , acc = accumulator , dhe r = rating
     book.averageRating = sum / book.ratings.length;
 
     await book.save();
