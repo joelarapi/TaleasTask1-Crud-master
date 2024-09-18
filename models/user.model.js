@@ -7,23 +7,13 @@ const ProfileSchema = new mongoose.Schema({
   favoriteGenres: [{
     type: String
   }],
+  reviews: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Review"
+  }],
   dateJoined: {
     type: Date,
     default: Date.now,
-  }
-});
-
-const RatedBookSchema = new mongoose.Schema({
-  bookId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Book',
-    required: true
-  },
-  rating: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 5
   }
 });
 
@@ -41,28 +31,23 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [8, "Password must be 8 characters or longer"],
+      minlength: [8, "Password must be 8 characters or longer"]
     },
-    userComments: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment"
-    }],
     profile: ProfileSchema,
-    ratedBooks: [RatedBookSchema],
-    referredUsers: [{
-      type: String,
-      unique: true
-    }],
     purchasedBooks: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref:'Book'
-    }]
+      ref: 'Book'
+    }],
+    isAdmin: {
+      type: Boolean,
+      default: false
+    },
+    refreshToken: {
+      type: String,
+      default: "",
+    }
   },
-
   { timestamps: true }
 );
-
-
-
 
 module.exports = mongoose.model("User", UserSchema);

@@ -14,33 +14,24 @@ const BookSchema = new mongoose.Schema(
       type:String,
     },
     publish_date: {
-      type: String,
+      type: Date,
       required: [true, "A publish date must be included"]
     }, 
     averageRating:{
       type: Number 
     },
-    ratings: [{
-      userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-      },
-      rating: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5
-      }
-    }],
-    comments:[{
-      type: mongoose.Schema.Types.ObjectId , 
-      ref: "Comment"
+    reviews: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"Review"
     }],
     recommendedBy: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'PublicFigure'
-    }]
+    }],
+    imageUrl: { 
+      type: String,
+      required:false,
+    }  
   }
 )
 

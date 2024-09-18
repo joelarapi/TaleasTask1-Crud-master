@@ -8,14 +8,18 @@ const PublicFigureSchema  = new mongoose.Schema({
   description: {
     type: String,
   },
-  industries: {
-    type: [String],
-    required: true
-  },
+  industries: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Industry",
+  }],
   recommendedBooks:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Book'
-  }]
+  }],
+  imageUrl: { 
+    type: String,
+    required:false,
+  }
 
 }, {timestamps: true})
 

@@ -3,10 +3,14 @@ const authenticateToken = require('../middleware/authenticateToken');
 
 module.exports = (app) => {
   app.post('/api/user', UserController.createUser);      
-  app.get('/api/users', UserController.findAllUsers);    
-  app.get('/api/user/:id', authenticateToken, UserController.findOneSingleUser); 
+  app.get('/api/users',authenticateToken, UserController.findAllUsers);   
+  app.get('/api/user/:id',authenticateToken, UserController.findOneSingleUser); 
   app.put('/api/user/:id', authenticateToken, UserController.updateExistingUser);
   app.delete('/api/user/:id', authenticateToken, UserController.deleteExistingUser);
   app.post('/api/user/:id/purchase', authenticateToken, UserController.purchaseBook); 
+
   app.post('/api/login', UserController.login);
+  app.post('/api/logout', UserController.logout);
+  app.get('/api/refresh-token', UserController.refreshToken); 
 };
+

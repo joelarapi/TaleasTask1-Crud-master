@@ -49,3 +49,41 @@ module.exports.addRatingToUser = async (userId, bookId, rating) => {
 
   await user.save();
 }
+
+module.exports.addReview = async (req, res) => {
+  try {
+    const { bookId, rating, content } = req.body;
+    const userId = req.user._id; 
+
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    const review = {
+      bookId,
+      user: userId,
+      rating,
+      content,
+      date: new Date()
+    };
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $push: { reviews: review } }, 
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(201).json({ message: "Review added successfully", review });
+  } catch (err) {
+    res.status(500).json({ message: "Error adding review", error: err.message });
+  }
+};
+
+
+
+

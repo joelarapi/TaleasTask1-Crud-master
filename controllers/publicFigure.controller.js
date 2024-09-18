@@ -1,4 +1,4 @@
-const PublicFigure = require('../models/publicFigure.model');
+const PublicFigure = require('../models/publicFigures.model')
 
 module.exports = {
   createPublicFigure: async (req, res) => {
@@ -12,7 +12,9 @@ module.exports = {
 
   findAllPublicFigures: async (req, res) => {
     try {
-      const allPublicFigures = await PublicFigure.find().populate('recommendedBooks');
+      const allPublicFigures = await PublicFigure.find()
+      .populate('recommendedBooks')   
+      .populate('industries', 'name'); 
       res.json(allPublicFigures);
     } catch (err) {
       res.status(400).json({ message: "Error fetching public figures", error: err.message });
